@@ -6,17 +6,32 @@ const readline = require('readline');
 readline.emitKeypressEvents(process.stdin);
 process.stdin.setRawMode(true);
 
-const pan = new Servo(23);
-const tilt = new Servo(24);
+const blue = {
+  pan: new Servo(23),
+  tilt: new Servo(24)
+};
+
+const gray = {
+  pan: new Servo(25),
+  tilt: new Servo(8)
+};
+
 let speed = Servo.Speed.NORMAL;
 
 const keyFunctions = {
   q: () => { process.exit(0); },
   c: (key) => { if (key.ctrl) process.exit(0); },
-  left: () => { pan.moveLeft(speed); },
-  right: () => { pan.moveRight(speed); },
-  up: () => { tilt.moveRight(speed); },
-  down: () => { tilt.moveLeft(speed); },
+
+  left: () => { blue.pan.moveLeft(speed); },
+  right: () => { blue.pan.moveRight(speed); },
+  up: () => { blue.tilt.moveRight(speed); },
+  down: () => { blue.tilt.moveLeft(speed); },
+
+  w: () => { gray.tilt.moveRight(speed); },
+  s: () => { gray.tilt.moveLeft(speed); },
+  a: () => { gray.pan.moveLeft(speed); },
+  d: () => { gray.pan.moveRight(speed); },
+
   '0': () => { speed = Servo.Speed.DISABLED; },
   '1': () => { speed = Servo.Speed.SLOW; },
   '2': () => { speed = Servo.Speed.NORMAL; },
@@ -32,6 +47,7 @@ const keyFunctions = {
 
 process.stdin.on('keypress', (str, key) => {
   if (keyFunctions[key.name] !== undefined) {
+    console.log(key);
     keyFunctions[key.name](key);
   } else {
     console.log('no function defined.');
