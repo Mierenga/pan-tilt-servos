@@ -14,10 +14,15 @@ Servo.Speed = {
   FAST: 3
 };
 
-function Servo(pin) {
+function Servo(pin, centerPulse) {
 
+  if (typeof centerPulse === 'number' && centerPulse >= MIN_PULSE && centerPulse <= MAX_PULSE) {
+    this._centerPulse = centerPulse;
+  } else {
+    this._centerPulse = 1500;
+  }
+  this._pulseWidth = this._centerPulse;
   this._servo = new Gpio(pin, {mode:Gpio.OUTPUT});
-  this._pulseWidth = 1500;
   this._update = setInterval(() => {
     //console.log(this._pulseWidth);
     this._servo.servoWrite(this._pulseWidth);
@@ -48,5 +53,13 @@ Servo.prototype.moveRight = function(speed) {
     this._pulseWidth = newPulse;
   }
 };
+
+Servo.prototype.getPulseWidth = function() {
+  return this._pulseWidth;
+}
+
+Servo.prototype.moveToCenter = function() {
+  this._pulseWidth = this._centerPulse;
+}
 
 module.exports = Servo;
